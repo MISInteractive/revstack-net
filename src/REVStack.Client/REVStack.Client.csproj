@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{53E358E0-7456-4CCA-90AE-3498F66B4B57}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RevStack.Client</RootNamespace>
+    <AssemblyName>RevStack.Client</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="API\AccessToken.cs" />
+    <Compile Include="API\Account\AccountDecorator.cs" />
+    <Compile Include="API\Account\AccountService.cs" />
+    <Compile Include="API\Account\AccountValidatorBase.cs" />
+    <Compile Include="API\Account\IAccount.cs" />
+    <Compile Include="API\Account\IValidation.cs" />
+    <Compile Include="API\Account\ValidationType.cs" />
+    <Compile Include="API\App\AppDecorator.cs" />
+    <Compile Include="API\App\AppService.cs" />
+    <Compile Include="API\App\AppValidatorBase.cs" />
+    <Compile Include="API\App\IApp.cs" />
+    <Compile Include="API\App\IValidation.cs" />
+    <Compile Include="API\App\ValidationType.cs" />
+    <Compile Include="API\ClientType.cs" />
+    <Compile Include="API\Extensions\PagingExtensions.cs" />
+    <Compile Include="API\IAccessToken.cs" />
+    <Compile Include="API\ICredentials.cs" />
+    <Compile Include="API\RequestObject.cs" />
+    <Compile Include="API\REVStackClient.cs" />
+    <Compile Include="API\Credentials.cs" />
+    <Compile Include="API\Datastore\DatastoreDecorator.cs" />
+    <Compile Include="API\Datastore\DatastoreValidationBase.cs" />
+    <Compile Include="API\Datastore\IDatastore.cs" />
+    <Compile Include="API\Datastore\IValidation.cs" />
+    <Compile Include="API\Datastore\ValidationType.cs" />
+    <Compile Include="API\Exceptions\RSException.cs" />
+    <Compile Include="API\Exceptions\RSExceptionType.cs" />
+    <Compile Include="API\REVStackRequest.cs" />
+    <Compile Include="API\RSProperty.cs" />
+    <Compile Include="API\RSRecordType.cs" />
+    <Compile Include="API\Store\Transaction\ITransaction.cs" />
+    <Compile Include="API\Store\Transaction\IValidation.cs" />
+    <Compile Include="API\Store\Transaction\TransactionDecorator.cs" />
+    <Compile Include="API\Store\Transaction\TransactionService.cs" />
+    <Compile Include="API\Store\Transaction\TransactionValidatorBase.cs" />
+    <Compile Include="API\Store\Transaction\ValidationType.cs" />
+    <Compile Include="API\Types\RID.cs" />
+    <Compile Include="API\Types\RSBaseRecord.cs" />
+    <Compile Include="API\Types\RSDocument.cs" />
+    <Compile Include="API\Types\RSLinkCollection.cs" />
+    <Compile Include="API\Types\RSType.cs" />
+    <Compile Include="API\User\IUser.cs" />
+    <Compile Include="API\User\IValidation.cs" />
+    <Compile Include="API\User\UserDecorator.cs" />
+    <Compile Include="API\User\UserService.cs" />
+    <Compile Include="API\User\UserValidatorBase.cs" />
+    <Compile Include="API\User\ValidationType.cs" />
+    <Compile Include="Http\Account\Account.cs" />
+    <Compile Include="Http\App\App.cs" />
+    <Compile Include="Http\Constants.cs" />
+    <Compile Include="Http\Datastore\Datastore.cs" />
+    <Compile Include="API\Datastore\DatastoreService.cs" />
+    <Compile Include="Http\HttpClient.cs" />
+    <Compile Include="Http\HttpRestResponse.cs" />
+    <Compile Include="Http\ResponseStatus.cs" />
+    <Compile Include="Http\Serializers\BinarySerializer.cs" />
+    <Compile Include="Http\Serializers\RecordSerializer.cs" />
+    <Compile Include="Http\Store\Transaction\Transaction.cs" />
+    <Compile Include="Http\User\User.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="API\Query\" />
+    <Folder Include="Http\Datastore\Query\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
