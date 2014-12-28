@@ -30,11 +30,21 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="IQToolkit, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\IQToolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="IQToolkit.Data, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\IQToolkit.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -56,9 +66,21 @@
     <Compile Include="API\App\IValidation.cs" />
     <Compile Include="API\App\ValidationType.cs" />
     <Compile Include="API\ClientType.cs" />
+    <Compile Include="API\Datastore\PagedDataSource.cs" />
     <Compile Include="API\Extensions\PagingExtensions.cs" />
     <Compile Include="API\IAccessToken.cs" />
     <Compile Include="API\ICredentials.cs" />
+    <Compile Include="API\Query\ColumnProjection.cs" />
+    <Compile Include="API\Query\ExpressionVisitorBase.cs" />
+    <Compile Include="API\Query\OrientDbFormatter.cs" />
+    <Compile Include="API\Query\OrientDbLanguage.cs" />
+    <Compile Include="API\Query\ProjectionRow.cs" />
+    <Compile Include="API\Query\Query.cs" />
+    <Compile Include="API\Query\QueryProvider.cs" />
+    <Compile Include="API\Query\QueryTranslater.cs" />
+    <Compile Include="API\Query\TypeSystem.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="API\RequestObject.cs" />
     <Compile Include="API\REVStackClient.cs" />
     <Compile Include="API\Credentials.cs" />
@@ -95,7 +117,9 @@
     <Compile Include="Http\Datastore\Datastore.cs" />
     <Compile Include="API\Datastore\DatastoreService.cs" />
     <Compile Include="Http\HttpClient.cs" />
+    <Compile Include="Http\HttpConnection.cs" />
     <Compile Include="Http\HttpRestResponse.cs" />
+    <Compile Include="Http\Query\HttpQueryProvider.cs" />
     <Compile Include="Http\ResponseStatus.cs" />
     <Compile Include="Http\Serializers\BinarySerializer.cs" />
     <Compile Include="Http\Serializers\RecordSerializer.cs" />
@@ -104,11 +128,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="API\Query\" />
     <Folder Include="Http\Datastore\Query\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <Content Include="bin\IQToolkit.Data.dll" />
+    <Content Include="bin\IQToolkit.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

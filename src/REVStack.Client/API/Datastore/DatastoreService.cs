@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RevStack.Client.API.Datastore;
 using System;
 using System.Collections.Generic;
@@ -17,31 +18,51 @@ namespace RevStack.Client.API.Datastore
             return Datastore.GetValidations();
         }
 
-        public override JObject Create(JObject json)
+        public override T Create<T>(T entity)
         {
-            Validate(json, ValidationType.Create);
-            return Datastore.Create(json);
+            return this.Create<T>(entity, false);
         }
 
-        public override JObject Update(JObject json)
+        public override T Create<T>(T entity, bool fullName)
         {
-            Validate(json, ValidationType.Update);
-            return Datastore.Update(json);
+            Validate(entity, ValidationType.Create);
+            return Datastore.Create<T>(entity, fullName);
         }
 
-        public override JObject Get(string id)
+        public override T Update<T>(T entity)
         {
-            return Datastore.Get(id);
+            return this.Update<T>(entity, false);
         }
 
-        public override JArray Lookup(string query, int page, int limit)
+        public override T Update<T>(T entity, bool fullName)
         {
-            return Datastore.Lookup(query, page, limit);
+            Validate(entity, ValidationType.Update);
+            return Datastore.Update<T>(entity, fullName);
         }
 
-        public override JObject Paginate(string query, int page, int limit)
+        public override T Get<T>(string id)
         {
-            return Datastore.Paginate(query, page, limit);
+            return this.Get<T>(id, false);
+        }
+
+        public override T Get<T>(string id, bool fullName)
+        {
+            return Datastore.Get<T>(id, fullName);
+        }
+
+        public override RevStack.Client.API.Query.Query<T> CreateQuery<T>(object[] args) 
+        {
+            return Datastore.CreateQuery<T>(args);
+        }
+
+        public override IQueryable<T> SqlQuery<T>(string query, object[] args)
+        {
+            return Datastore.SqlQuery<T>(query, args);
+        }
+
+        public override PagedDataSource<T> Paginate<T>(string query, int page, int limit, object[] args)
+        {
+            return Datastore.Paginate<T>(query, page, limit, args);
         }
 
         public override void Command(string query)

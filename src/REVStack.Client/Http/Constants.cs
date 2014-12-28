@@ -8,7 +8,7 @@ namespace RevStack.Client.Http
 {
     internal class Constants
     {
-        internal const string API_HOST_URL = "http://baas3.r3vstack.com/api"; 
+        internal const string API_HOST_URL = "http://localhost:56415/api"; //http://baas3.r3vstack.com
         internal const string API_VERSION = "1";
         internal const string API_VERSION_HEADER = "X-R3VStack-API-Version";
         internal const string CONTENT_TYPE = "application/json"; 

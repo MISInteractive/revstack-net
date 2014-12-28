@@ -21,14 +21,24 @@ namespace RevStack.Client.API.Datastore
             _datastore = datastore;
         }
 
-        public virtual JObject Create(JObject json)
+        public virtual T Create<T>(T entity) where T : new()
         {
-            return Datastore.Create(json);
+            return this.Create<T>(entity, false);
         }
 
-        public virtual JObject Update(JObject json)
+        public virtual T Create<T>(T entity, bool fullName) where T : new()
         {
-            return Datastore.Update(json);
+            return Datastore.Create<T>(entity);
+        }
+
+        public virtual T Update<T>(T entity) where T : new()
+        {
+            return this.Update<T>(entity, false);
+        }
+
+        public virtual T Update<T>(T entity, bool fullName) where T : new()
+        {
+            return Datastore.Update<T>(entity);
         }
 
         public virtual void Delete(string id)
@@ -41,19 +51,29 @@ namespace RevStack.Client.API.Datastore
             Datastore.Command(query);
         }
 
-        public virtual JObject Get(string id)
+        public virtual T Get<T>(string id, bool fullName) where T : new()
         {
-            return Datastore.Get(id);
+            return Datastore.Get<T>(id, false);
         }
 
-        public virtual JArray Lookup(string query, int page, int limit)
+        public virtual T Get<T>(string id) where T : new()
         {
-            return Datastore.Lookup(query, page, limit);
+            return Datastore.Get<T>(id);
         }
 
-        public virtual JObject Paginate(string query, int page, int limit)
+        public virtual RevStack.Client.API.Query.Query<T> CreateQuery<T>(object[] args) where T : new()
         {
-            return Datastore.Paginate(query, page, limit);
+            return Datastore.CreateQuery<T>(args);
+        }
+
+        public virtual IQueryable<T> SqlQuery<T>(string query, object[] args) where T : new()
+        {
+            return Datastore.SqlQuery<T>(query, args);
+        }
+
+        public virtual PagedDataSource<T> Paginate<T>(string query, int page, int limit, object[] args) where T : new()
+        {
+            return Datastore.Paginate<T>(query, page, limit, args);
         }
 
         public virtual IEnumerable<IValidation> GetValidations()

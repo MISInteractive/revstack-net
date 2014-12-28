@@ -10,6 +10,12 @@ namespace RevStack.Client.API
     {
         public Credentials() { }
 
+        public Credentials(string appId, IAccessToken accessToken)
+        {
+            AppId = appId;
+            AccessToken = accessToken;
+        }
+
         public Credentials(string appId, string username, string password, IAccessToken accessToken)
         {
             AppId = appId;

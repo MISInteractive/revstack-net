@@ -7,28 +7,66 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using RevStack.Client.Http.Query;
 
 namespace RevStack.Client.Http.Datastore
 {
     internal class Datastore : RequestObject, API.Datastore.IDatastore
-    {      
-        public Datastore(string host, int version, ICredentials credentials)
-            : base(host, version, credentials) { }
+    {
+        private readonly HttpQueryProvider queryProvider;
 
-        public virtual JObject Create(JObject json)
+        public Datastore(string host, int version, ICredentials credentials)
+            : base(host, version, credentials) 
         {
-            string method = "POST";
-            string url = HttpClient.BuildUrl(this.Host, this.Version, this.AppId.ToString(), "/datastore");
-            HttpRestResponse response = HttpClient.SendRequest(url, method, json.ToString(), this.Credentials.Username, this.Credentials.Password, this.Credentials.AccessToken, false, true);
-            return response.GetJson();
+            HttpConnection connection = new HttpConnection();
+            connection.Host = host;
+            connection.AppId = this.AppId;
+            connection.Version = version;
+            connection.Credentials = credentials;
+            queryProvider = new HttpQueryProvider(connection);
         }
 
-        public virtual JObject Update(JObject json)
+        public virtual T Create<T>(T entity) where T : new()
         {
+            return this.Create<T>(entity, false);
+        }
+
+        public virtual T Create<T>(T entity, bool fullName) where T : new()
+        {
+            string collection = typeof(T).Name;
+            if (fullName)
+                collection = typeof(T).FullName;
+            string json = JsonConvert.SerializeObject(entity);
+            JObject item = JObject.Parse(json);
+            item["@class"] = collection;
+            json = item.ToString();
+
+            string method = "POST";
+            string url = HttpClient.BuildUrl(this.Host, this.Version, this.AppId.ToString(), "/datastore");
+            HttpRestResponse response = HttpClient.SendRequest(url, method, json, this.Credentials.Username, this.Credentials.Password, this.Credentials.AccessToken, false, true);
+            return JsonConvert.DeserializeObject<T>(response.GetJson().ToString());
+        }
+
+        public virtual T Update<T>(T entity) where T : new()
+        {
+            return this.Update<T>(entity, false);
+        }
+
+        public virtual T Update<T>(T entity, bool fullName) where T : new()
+        {
+            string collection = typeof(T).Name;
+            if (fullName)
+                collection = typeof(T).FullName;
+            string json = JsonConvert.SerializeObject(entity);
+            JObject item = JObject.Parse(json);
+            item["@class"] = collection;
+            json = item.ToString();
+
             string method = "PUT";
             string url = HttpClient.BuildUrl(this.Host, this.Version, this.AppId.ToString(), "/datastore");
-            HttpRestResponse response = HttpClient.SendRequest(url, method, json.ToString(), this.Credentials.Username, this.Credentials.Password, this.Credentials.AccessToken, false, true);
-            return response.GetJson();
+            HttpRestResponse response = HttpClient.SendRequest(url, method, json, this.Credentials.Username, this.Credentials.Password, this.Credentials.AccessToken, false, true);
+            return JsonConvert.DeserializeObject<T>(response.GetJson().ToString());
         }
 
         public virtual void Delete(string id)
@@ -45,45 +83,93 @@ namespace RevStack.Client.Http.Datastore
             HttpRestResponse response = HttpClient.SendRequest(url, method, null, this.Credentials.Username, this.Credentials.Password, this.Credentials.AccessToken, false, true);
         }
 
-        public virtual JObject Get(string id)
+        public virtual T Get<T>(string id) where T : new()
         {
-            string method = "GET";
-            string url = HttpClient.BuildUrl(this.Host, this.Version, this.AppId.ToString(), this.AppId.ToString() + "/datastore/" + id);
-            HttpRestResponse response = HttpClient.SendRequest(url, method, null, this.Credentials.Username, this.Credentials.Password, this.Credentials.AccessToken, false, true);
-            return response.GetJson();
+            return this.Get<T>(id, false);
         }
 
-        public virtual JArray Lookup(string query, int page, int limit)
+        public virtual T Get<T>(string id, bool fullName) where T : new()
         {
+            string collection = typeof(T).Name;
+            if (fullName)
+                collection = typeof(T).FullName;
+
             string method = "GET";
-            string url = HttpClient.BuildUrl(this.Host, this.Version, this.AppId.ToString(), "/datastore/lookup/" + Uri.EscapeUriString(query).Replace("%28", "(").Replace("%29", ")") + "/-1");
+            string url = HttpClient.BuildUrl(this.Host, this.Version, this.AppId.ToString(), "/datastore/" + collection + "/" + id);
+            //string url = HttpClient.BuildUrl(this.Host, this.Version, this.AppId.ToString(), "/datastore/" + id);
             HttpRestResponse response = HttpClient.SendRequest(url, method, null, this.Credentials.Username, this.Credentials.Password, this.Credentials.AccessToken, false, true);
-            return JArray.Parse(response.Body);
+            return JsonConvert.DeserializeObject<T>(response.GetJson().ToString());
         }
 
-        public virtual JObject Paginate(string query, int page, int limit)
+        public virtual RevStack.Client.API.Query.Query<T> CreateQuery<T>(object[] args) where T : new()
         {
-            JArray results = this.Lookup(query, page, limit);
-            List<JToken> s = results.Page(page, limit).ToList();
-            int count = s.Count;
-            int total = results.Count;
+            int top = -1;
+            string fetch = "*:0";
+            string collection = typeof(T).Name;
+
+            if (args != null && args[0] != null)
+            {
+                if (args.Length > 0) top = int.Parse(args[0].ToString());
+                if (args.Length > 1) fetch = args[1].ToString();
+            }
+
+            if (string.IsNullOrEmpty(fetch))
+                fetch = "*:0";
+
+            return new RevStack.Client.API.Query.Query<T>(queryProvider);
+        }
+
+        public virtual IQueryable<T> SqlQuery<T>(string query, object[] args) where T : new()
+        {
+            int top = -1;
+            string fetch = "*:0";
+            string collection = typeof(T).Name;
+
+            if (args != null && args[0] != null)
+            {
+                if (args.Length > 0) top = int.Parse(args[0].ToString());
+                if (args.Length > 1) fetch = args[1].ToString();
+            }
+
+            if (string.IsNullOrEmpty(fetch))
+                fetch = "*:0";
+
+            string method = "GET";
+            string url = HttpClient.BuildUrl(this.Host, this.Version, this.AppId.ToString(), "/datastore/sql/" + Uri.EscapeUriString(query).Replace("%28", "(").Replace("%29", ")")) + "?top=" + top + "&fetch=" + fetch;
+            HttpRestResponse response = HttpClient.SendRequest(url, method, null, this.Credentials.Username, this.Credentials.Password, this.Credentials.AccessToken, false, true);
+            IQueryable<T> results = JsonConvert.DeserializeObject<IEnumerable<T>>(response.Body).AsQueryable();
+            return results;
+        }
+
+        public virtual PagedDataSource<T> Paginate<T>(string query, int page, int limit, object[] args) where T : new()
+        {
+            if (page < 1)
+                page = 1;
+            
+            IQueryable<T> results = this.SqlQuery<T>(query, args);
+
+            if (limit == -1)
+                limit = results.Count();
+
+            IQueryable<T> s = results.Page(page, limit).AsQueryable();//.ToList();
+            int count = s.Count();
+            int total = results.Count();
 
             double dbl_page_count = ((double)total / (double)limit);
             int page_count = (int)Math.Ceiling(dbl_page_count);
             if (page_count == 0) page_count = 1;
 
-            JObject paging = new JObject();
-            paging.Add("page", page);
-            paging.Add("limit", limit);
-            paging.Add("count", count);
-            paging.Add("page_count", page_count);
-            paging.Add("total_count", total);
+            Pagination pagination = new Pagination();
+            pagination.Page = page;
+            pagination.Limit = limit;
+            pagination.Count = count;
+            pagination.PageCount = page_count;
+            pagination.TotalCount = total;
 
-            JObject response = new JObject();
-            response.Add("_data", JToken.FromObject(s));
-            response.Add("pagination", paging);
-            //{"response":[{"Rating":"Good"}],"count":1,"total":1,"pagination":{"page":2, "limit":5}}
-            return response;
+            PagedDataSource<T> datasource = new PagedDataSource<T>();
+            datasource.Data = s.AsQueryable<T>();
+            datasource.Pagination = pagination;
+            return datasource;
         }
 
         public virtual IEnumerable<IValidation> GetValidations()

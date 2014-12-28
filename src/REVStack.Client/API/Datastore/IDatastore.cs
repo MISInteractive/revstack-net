@@ -9,13 +9,17 @@ namespace RevStack.Client.API.Datastore
 {
     public interface IDatastore
     {
-        JObject Create(JObject json);
-        JObject Update(JObject json);
+        T Create<T>(T entity) where T : new();
+        T Create<T>(T entity, bool fullName) where T : new();
+        T Update<T>(T entity) where T : new();
+        T Update<T>(T entity, bool fullName) where T : new();
         void Delete(string id);
-        JObject Get(string id);
+        T Get<T>(string id, bool fullName) where T : new();
+        T Get<T>(string id) where T : new();
         void Command(string query);
-        JArray Lookup(string query, int page, int limit); // page=-1 limit=-1 to get all
-        JObject Paginate(string query, int page, int limit);
+        RevStack.Client.API.Query.Query<T> CreateQuery<T>(object[] args) where T : new();
+        IQueryable<T> SqlQuery<T>(string query, object[] args) where T : new(); //top=-1 fetch=*:-1 to get all
+        PagedDataSource<T> Paginate<T>(string query, int page, int limit, object[] args) where T : new(); //page=-1 limit=-1 to get all
         IEnumerable<IValidation> GetValidations();
     }
 
