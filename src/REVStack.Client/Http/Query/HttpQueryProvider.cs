@@ -39,20 +39,5 @@ namespace RevStack.Client.Http.Query
             //IEnumerable<object> results = JsonConvert.DeserializeObject<IEnumerable<object>>(response.Body).Cast<elementType>;
             return results;
         }
-
-        //public override IQueryable<T> Execute<T>(Expression expression)
-        //{
-        //    int top = -1;
-        //    string fetch = "*:0";
-
-        //    string query = this.Translate(expression);
-        //    Type elementType = TypeSystem.GetElementType(expression.Type);
-            
-        //    string method = "GET";
-        //    string url = HttpClient.BuildUrl(connection.Host, connection.Version, connection.AppId.ToString(), "/datastore/sql/" + Uri.EscapeUriString(query).Replace("%28", "(").Replace("%29", ")")) + "?top=" + top + "&fetch=" + fetch;
-        //    HttpRestResponse response = HttpClient.SendRequest(url, method, null, connection.Credentials.Username, connection.Credentials.Password, connection.Credentials.AccessToken, false, true);
-        //    IQueryable<T> results = JsonConvert.DeserializeObject<IQueryable<T>>(response.Body);
-        //    return results;
-        //}
     }
 }

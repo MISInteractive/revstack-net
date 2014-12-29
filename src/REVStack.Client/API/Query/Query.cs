@@ -50,7 +50,9 @@ namespace RevStack.Client.API.Query
             }
             if (expression == null)
             {
-                throw new ArgumentNullException("expression");
+                expression = Expression.Constant(this);
+                this.expression = expression;
+                //throw new ArgumentNullException("expression");
             }
             if (!typeof(IQueryable<T>).IsAssignableFrom(expression.Type))
             {

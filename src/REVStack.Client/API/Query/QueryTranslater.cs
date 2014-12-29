@@ -64,6 +64,7 @@ namespace RevStack.Client.API.Query
                     sb.Append(" WHERE ");
                     LambdaExpression lambda = (LambdaExpression)StripQuotes(m.Arguments[1]);
                     this.Visit(lambda.Body);
+                    //this.Visit(m.Arguments[1]);
                     sb.Append(" LIMIT 1 ");
                     return m;
                 }
@@ -176,8 +177,22 @@ namespace RevStack.Client.API.Query
             {
                 sb.Append(m.Member.Name);
                 return m;
+            } //there must be a better way...
+            else if (m.Expression != null && m.Expression.NodeType == ExpressionType.Constant) 
+            {
+                object v = GetValue(m);
+                //handle strings...
+                if (v.GetType() == typeof(string))
+                    v = "\'" + v.ToString() + "\'";
+                sb.Append(v);
+                return m;
             }
             throw new NotSupportedException(string.Format("The member '{0}' is not supported", m.Member.Name));
+        }
+
+        public static object GetValue(Expression member)
+        {
+            return Expression.Lambda(member).Compile().DynamicInvoke();
         }
     }
 

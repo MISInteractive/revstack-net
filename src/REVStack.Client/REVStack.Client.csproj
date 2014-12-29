@@ -122,14 +122,14 @@
     <Compile Include="Http\Query\HttpQueryProvider.cs" />
     <Compile Include="Http\ResponseStatus.cs" />
     <Compile Include="Http\Serializers\BinarySerializer.cs" />
-    <Compile Include="Http\Serializers\RecordSerializer.cs" />
+    <Compile Include="Http\Serializers\RecordSerializer.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Http\Store\Transaction\Transaction.cs" />
     <Compile Include="Http\User\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Http\Datastore\Query\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="bin\IQToolkit.Data.dll" />
     <Content Include="bin\IQToolkit.dll" />
