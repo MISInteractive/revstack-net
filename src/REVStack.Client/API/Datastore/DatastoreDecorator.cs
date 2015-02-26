@@ -21,6 +21,16 @@ namespace RevStack.Client.API.Datastore
             _datastore = datastore;
         }
 
+        //public virtual object Create(object entity)
+        //{
+        //    return this.Create(entity, false);
+        //}
+
+        //public virtual object Create(object entity, bool fullName)
+        //{
+        //    return Datastore.Create(entity);
+        //}
+
         public virtual T Create<T>(T entity) where T : new()
         {
             return this.Create<T>(entity, false);

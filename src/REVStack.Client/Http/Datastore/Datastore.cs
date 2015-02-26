@@ -34,9 +34,9 @@ namespace RevStack.Client.Http.Datastore
 
         public virtual T Create<T>(T entity, bool fullName) where T : new()
         {
-            string collection = typeof(T).Name;
+            string collection = entity.GetType().Name;
             if (fullName)
-                collection = typeof(T).FullName;
+                collection = entity.GetType().FullName;
             string json = JsonConvert.SerializeObject(entity);
             JObject item = JObject.Parse(json);
             item["@class"] = collection;
@@ -55,9 +55,9 @@ namespace RevStack.Client.Http.Datastore
 
         public virtual T Update<T>(T entity, bool fullName) where T : new()
         {
-            string collection = typeof(T).Name;
+            string collection = entity.GetType().Name;
             if (fullName)
-                collection = typeof(T).FullName;
+                collection = entity.GetType().FullName;
             string json = JsonConvert.SerializeObject(entity);
             JObject item = JObject.Parse(json);
             item["@class"] = collection;
@@ -71,6 +71,7 @@ namespace RevStack.Client.Http.Datastore
 
         public virtual void Delete(string id)
         {
+            id = id.Replace("#", "");
             string method = "DELETE";
             string url = HttpClient.BuildUrl(this.Host, this.Version, this.AppId.ToString(), "/datastore/" + id);
             HttpRestResponse response = HttpClient.SendRequest(url, method, null, this.Credentials.Username, this.Credentials.Password, this.Credentials.AccessToken, false, true);
@@ -79,7 +80,11 @@ namespace RevStack.Client.Http.Datastore
         public virtual void Command(string query)
         {
             string method = "PUT";
-            string url = HttpClient.BuildUrl(this.Host, this.Version, this.AppId.ToString(), "/datastore/command/" + Uri.EscapeUriString(query).Replace("%28", "(").Replace("%29", ")"));
+            query = System.Web.HttpUtility.UrlEncode(query);
+            //string query2 = Uri.EscapeUriString(query).Replace("%28", "(").Replace("%29", ")");
+            //query = Uri.EscapeDataString(query).Replace("%28", "(").Replace("%29", ")");
+             
+            string url = HttpClient.BuildUrl(this.Host, this.Version, this.AppId.ToString(), "/datastore/command/" + query);
             HttpRestResponse response = HttpClient.SendRequest(url, method, null, this.Credentials.Username, this.Credentials.Password, this.Credentials.AccessToken, false, true);
         }
 
@@ -134,8 +139,11 @@ namespace RevStack.Client.Http.Datastore
             if (string.IsNullOrEmpty(fetch))
                 fetch = "*:0";
 
+            // Uri.EscapeUriString(query).Replace("%28", "(").Replace("%29", ")"))
+            query = System.Web.HttpUtility.UrlEncode(query);
+
             string method = "GET";
-            string url = HttpClient.BuildUrl(this.Host, this.Version, this.AppId.ToString(), "/datastore/sql/" + Uri.EscapeUriString(query).Replace("%28", "(").Replace("%29", ")")) + "?top=" + top + "&fetch=" + fetch;
+            string url = HttpClient.BuildUrl(this.Host, this.Version, this.AppId.ToString(), "/datastore/sql/" + query) + "?top=" + top + "&fetch=" + fetch;
             HttpRestResponse response = HttpClient.SendRequest(url, method, null, this.Credentials.Username, this.Credentials.Password, this.Credentials.AccessToken, false, true);
             IQueryable<T> results = JsonConvert.DeserializeObject<IEnumerable<T>>(response.Body).AsQueryable();
             return results;

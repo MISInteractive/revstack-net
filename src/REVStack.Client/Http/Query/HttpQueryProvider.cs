@@ -10,6 +10,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace RevStack.Client.Http.Query
 {
@@ -29,10 +30,18 @@ namespace RevStack.Client.Http.Query
 
             string query = this.Translate(expression);
             Type elementType = TypeSystem.GetElementType(expression.Type);
-            
-          
+
+            //query = HttpUtility.UrlPathEncode(query);
+            //query = Uri.EscapeUriString(query).Replace("%28", "(").Replace("%29", ")");
+            //query = query.Replace("(", "%28");
+            //query = query.Replace(")", "%29");
+            //%2F
+            query = query.Replace("/", "%2F");
+            //query = HttpUtility.UrlPathEncode(query);
+
             string method = "GET";
-            string url = HttpClient.BuildUrl(connection.Host, connection.Version, connection.AppId.ToString(), "/datastore/sql/" + Uri.EscapeUriString(query).Replace("%28", "(").Replace("%29", ")")) + "?top=" + top + "&fetch=" + fetch;
+            string url = HttpClient.BuildUrl(connection.Host, connection.Version, connection.AppId.ToString(), "/datastore/sql/" + query) + "?top=" + top + "&fetch=" + fetch;
+            
             HttpRestResponse response = HttpClient.SendRequest(url, method, null, connection.Credentials.Username, connection.Credentials.Password, connection.Credentials.AccessToken, false, true);
             object results = JsonConvert.DeserializeObject(response.Body, typeof(IEnumerable<>).MakeGenericType(elementType));
             

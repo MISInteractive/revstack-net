@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -47,7 +49,8 @@ namespace RevStack.Client.API.Query
 
         protected override Expression VisitMethodCall(MethodCallExpression m)
         {
-            if (m.Method.DeclaringType == typeof(Queryable))
+           
+            if (m.Method.DeclaringType == typeof(Queryable) || m.Method.DeclaringType == typeof(System.Linq.Enumerable))
             {
                 if (m.Method.Name == "Where")
                 {
@@ -65,6 +68,18 @@ namespace RevStack.Client.API.Query
                     LambdaExpression lambda = (LambdaExpression)StripQuotes(m.Arguments[1]);
                     this.Visit(lambda.Body);
                     //this.Visit(m.Arguments[1]);
+                    sb.Append(" LIMIT 1 ");
+                    return m;
+                }
+                else if (m.Method.Name == "FirstOrDefault")
+                {
+                    //this.Visit(m.Arguments[0]);
+                    //sb.Append(" WHERE ");
+                    //if (m.Arguments.Count > 1)
+                    //{
+                    //    LambdaExpression lambda = (LambdaExpression)StripQuotes(m.Arguments[1]);
+                    //    this.Visit(lambda.Body);
+                    //}
                     sb.Append(" LIMIT 1 ");
                     return m;
                 }
@@ -86,6 +101,27 @@ namespace RevStack.Client.API.Query
 
         protected override Expression VisitUnary(UnaryExpression u)
         {
+            //Expression operand = this.Visit(u.Operand);
+            //if (operand != u.Operand)
+            //{
+            //    return Expression.MakeUnary(u.NodeType, operand, u.Type, u.Method);
+            //}
+
+            if (u.NodeType == ExpressionType.ArrayLength)
+            {
+                Expression expression = this.Visit(u.Operand);
+                //translate arraylength into normal member expression
+                return Expression.MakeMemberAccess(expression, expression.Type.GetRuntimeProperty("Length"));
+            }
+            else if (u.NodeType == ExpressionType.Convert)
+            {
+                return base.Visit(u.Operand);
+            }
+            else
+            {
+                return u.Update(this.Visit(u.Operand));
+            }
+
             switch (u.NodeType)
             {
                 case ExpressionType.Not:

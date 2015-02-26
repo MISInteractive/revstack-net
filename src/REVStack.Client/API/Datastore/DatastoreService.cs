@@ -18,6 +18,17 @@ namespace RevStack.Client.API.Datastore
             return Datastore.GetValidations();
         }
 
+        //public override object Create(object entity)
+        //{
+        //    return this.Create(entity, false);
+        //}
+
+        //public override object Create(object entity, bool fullName)
+        //{
+        //    Validate(entity, ValidationType.Create);
+        //    return Datastore.Create(entity, fullName);
+        //}
+
         public override T Create<T>(T entity)
         {
             return this.Create<T>(entity, false);
