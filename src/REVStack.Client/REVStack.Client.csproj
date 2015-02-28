@@ -145,6 +145,7 @@
     <Compile Include="Http\HttpClient.cs" />
     <Compile Include="Http\HttpConnection.cs" />
     <Compile Include="Http\HttpRestResponse.cs" />
+    <Compile Include="Http\LowercaseJsonSerializer.cs" />
     <Compile Include="Http\Membership\Membership.cs" />
     <Compile Include="Http\Query\HttpQueryProvider.cs" />
     <Compile Include="Http\ResponseStatus.cs" />

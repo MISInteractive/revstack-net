@@ -28,7 +28,7 @@ namespace RevStack.Client.Http.Role
 
         public virtual T Create<T>(T entity) where T : new()
         {
-            string json = JsonConvert.SerializeObject(entity);
+            string json = LowercaseJsonSerializer.SerializeObject(entity);
             JObject item = JObject.Parse(json);
             item["@class"] = "ORole";
             json = item.ToString();
@@ -41,7 +41,7 @@ namespace RevStack.Client.Http.Role
 
         public virtual T Update<T>(T entity) where T : new()
         {
-            string json = JsonConvert.SerializeObject(entity);
+            string json = LowercaseJsonSerializer.SerializeObject(entity);
             JObject item = JObject.Parse(json);
             item["@class"] = "ORole";
             json = item.ToString();

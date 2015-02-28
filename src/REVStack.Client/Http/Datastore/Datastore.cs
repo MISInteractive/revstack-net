@@ -37,7 +37,7 @@ namespace RevStack.Client.Http.Datastore
             string collection = entity.GetType().Name;
             if (fullName)
                 collection = entity.GetType().FullName;
-            string json = JsonConvert.SerializeObject(entity);
+            string json = LowercaseJsonSerializer.SerializeObject(entity);  
             JObject item = JObject.Parse(json);
             item["@class"] = collection;
             json = item.ToString();
@@ -58,7 +58,7 @@ namespace RevStack.Client.Http.Datastore
             string collection = entity.GetType().Name;
             if (fullName)
                 collection = entity.GetType().FullName;
-            string json = JsonConvert.SerializeObject(entity);
+            string json = LowercaseJsonSerializer.SerializeObject(entity);  
             JObject item = JObject.Parse(json);
             item["@class"] = collection;
             json = item.ToString();
@@ -83,7 +83,6 @@ namespace RevStack.Client.Http.Datastore
             query = System.Web.HttpUtility.UrlEncode(query);
             //string query2 = Uri.EscapeUriString(query).Replace("%28", "(").Replace("%29", ")");
             //query = Uri.EscapeDataString(query).Replace("%28", "(").Replace("%29", ")");
-             
             string url = HttpClient.BuildUrl(this.Host, this.Version, this.AppId.ToString(), "/datastore/command/" + query);
             HttpRestResponse response = HttpClient.SendRequest(url, method, null, this.Credentials.Username, this.Credentials.Password, this.Credentials.AccessToken, false, true);
         }
@@ -101,7 +100,6 @@ namespace RevStack.Client.Http.Datastore
 
             string method = "GET";
             string url = HttpClient.BuildUrl(this.Host, this.Version, this.AppId.ToString(), "/datastore/" + collection + "/" + id);
-            //string url = HttpClient.BuildUrl(this.Host, this.Version, this.AppId.ToString(), "/datastore/" + id);
             HttpRestResponse response = HttpClient.SendRequest(url, method, null, this.Credentials.Username, this.Credentials.Password, this.Credentials.AccessToken, false, true);
             return JsonConvert.DeserializeObject<T>(response.GetJson().ToString());
         }
@@ -139,7 +137,6 @@ namespace RevStack.Client.Http.Datastore
             if (string.IsNullOrEmpty(fetch))
                 fetch = "*:0";
 
-            // Uri.EscapeUriString(query).Replace("%28", "(").Replace("%29", ")"))
             query = System.Web.HttpUtility.UrlEncode(query);
 
             string method = "GET";
@@ -159,7 +156,7 @@ namespace RevStack.Client.Http.Datastore
             if (limit == -1)
                 limit = results.Count();
 
-            IQueryable<T> s = results.Page(page, limit).AsQueryable();//.ToList();
+            IQueryable<T> s = results.Page(page, limit).AsQueryable();
             int count = s.Count();
             int total = results.Count();
 

@@ -207,11 +207,12 @@ namespace RevStack.Client.API.Query
             return c;
         }
 
+        //DEFAULT To LOWER CASE FOR ALL MEMBERS
         protected override Expression VisitMemberAccess(MemberExpression m)
         {
             if (m.Expression != null && m.Expression.NodeType == ExpressionType.Parameter)
             {
-                sb.Append(m.Member.Name);
+                sb.Append(m.Member.Name.ToLower());
                 return m;
             } //there must be a better way...
             else if (m.Expression != null && m.Expression.NodeType == ExpressionType.Constant) 
