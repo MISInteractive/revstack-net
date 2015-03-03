@@ -64,6 +64,8 @@ namespace RevStack.Client.Http.Role
             string method = "GET";
             string url = HttpClient.BuildUrl(this.Host, this.Version, this.AppId.ToString(), "/role/" + roleName);
             HttpRestResponse response = HttpClient.SendRequest(url, method, null, this.Credentials.Username, this.Credentials.Password, this.Credentials.AccessToken, false, true);
+            if (response.StatusCode == 404)
+                return default(T);
             return JsonConvert.DeserializeObject<T>(response.GetJson().ToString());
         }
 
